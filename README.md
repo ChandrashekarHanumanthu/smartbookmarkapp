@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Bookmark App
 
-## Getting Started
+A simple bookmark manager built with Next.js, Supabase, and Tailwind CSS.
 
-First, run the development server:
+## Features
 
+- ✅ Google OAuth authentication (no email/password)
+- ✅ Add bookmarks with title and URL
+- ✅ Private bookmarks (each user sees only their own)
+- ✅ Real-time updates across multiple tabs
+- ✅ Delete bookmarks
+- ✅ Responsive design with Tailwind CSS
+
+## Tech Stack
+
+- **Frontend**: Next.js (App Router), TypeScript, Tailwind CSS
+- **Backend**: Supabase (Auth, Database, Realtime)
+- **Deployment**: Vercel
+
+## Setup Instructions
+
+### 1. Clone the repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo-url>
+cd smart-bookmark-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Set up Supabase
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a new Supabase project at [supabase.com](https://supabase.com)
+2. Go to Authentication > Settings and enable Google OAuth
+3. Add your Google OAuth credentials
+4. Run the SQL schema from `supabase-schema.sql` in the Supabase SQL editor
 
-## Learn More
+### 4. Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+Create a `.env.local` file in the root directory:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Get these values from your Supabase project settings.
 
-## Deploy on Vercel
+### 5. Run the development server
+```bash
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Database Schema
+
+The app uses a `bookmarks` table with the following structure:
+
+```sql
+CREATE TABLE bookmarks (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  url TEXT NOT NULL,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+Row Level Security (RLS) is enabled to ensure users can only access their own bookmarks.
+
+## Deployment
+
+The app is ready to be deployed on Vercel:
+
+1. Push your code to GitHub
+2. Connect your GitHub repository to Vercel
+3. Add the environment variables in Vercel dashboard
+4. Deploy!
+
+## Usage
+
+1. Click "Login with Google" to authenticate
+2. Add bookmarks using the title and URL fields
+3. Your bookmarks are saved and synced in real-time
+4. Open multiple tabs to see real-time updates
+5. Click "Delete" to remove bookmarks
+6. Click "Logout" to sign out
+
+## Security Features
+
+- Row Level Security (RLS) ensures data privacy
+- Users can only access their own bookmarks
+- Secure Google OAuth integration
+- Environment variables for sensitive data
