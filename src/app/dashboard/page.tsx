@@ -116,7 +116,13 @@ export default function Dashboard() {
     fetchBookmarks(user.id)
   }
 
-  const deleteBookmark = async (id: string) => {
+  const deleteBookmark = async (id: string, title: string) => {
+    // Show confirmation dialog
+    const confirmed = window.confirm(`Are you sure you want to delete "${title}"?`)
+    if (!confirmed) {
+      return // User cancelled the deletion
+    }
+    
     // Optimistic UI update - remove immediately
     setBookmarks(prev => prev.filter(b => b.id !== id))
     
@@ -246,7 +252,7 @@ export default function Dashboard() {
                       </svg>
                     </div>
                     <button
-                      onClick={() => deleteBookmark(b.id)}
+                      onClick={() => deleteBookmark(b.id, b.title)}
                       className="opacity-100 transition-opacity duration-200 p-2 bg-red-900/30 text-red-400 rounded-lg hover:bg-red-900/50 hover:text-red-300"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
